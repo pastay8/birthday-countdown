@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Birthday Countdown Gift</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    #instruction {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #ff4081;
+    }
+
+    #giftBtn, #videoBtn {
+      font-size: 28px;
+      padding: 10px 20px;
+      margin: 20px;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      background-color: #ff4081;
+      color: white;
+      transition: transform 0.3s;
+    }
+
+    #giftBtn:hover:not(:disabled), #videoBtn:hover {
+      transform: scale(1.1);
+    }
+
+    .message {
+      font-size: 36px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    video {
+      display: none;
+      margin-top: 30px;
+      max-width: 90%;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="instruction">Click the gift box to see your message!</div>
+  <button id="giftBtn">🎁</button>
+
+  <div id="countdown" class="message"></div>
+  <div id="celebrate" class="message">🎉 Get ready to celebrate! 🎈</div>
+
+  <button id="videoBtn" style="display:none;">▶️ Click here to view the video</button>
+
+  <video id="bdayVideo" controls>
+    <source src="your-video.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <script>
+    const giftBtn = document.getElementById('giftBtn');
+    const videoBtn = document.getElementById('videoBtn');
+    const countdown = document.getElementById('countdown');
+    const celebrate = document.getElementById('celebrate');
+    const instruction = document.getElementById('instruction');
+    const bdayVideo = document.getElementById('bdayVideo');
+
+    const targetDate = new Date("2025-06-12T00:00:00");
+
+    giftBtn.addEventListener('click', () => {
+      const today = new Date();
+      const diffTime = targetDate - today;
+      const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      countdown.textContent = `${daysLeft} Days to go baby!`;
+      countdown.style.display = 'block';
+      celebrate.style.display = 'block';
+      giftBtn.disabled = true;
+      instruction.textContent = "💝 Message unlocked!";
+      videoBtn.style.display = 'inline-block';
+    });
+
+    videoBtn.addEventListener('click', () => {
+      videoBtn.style.display = 'none';
+      bdayVideo.style.display = 'block';
+      bdayVideo.play();
+    });
+  </script>
+
+</body>
+</html>
