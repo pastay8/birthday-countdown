@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Birthday Countdown Gift</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+
+    #slideshow {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      display: none;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      animation: fadeSlide 40s infinite;
+    }
+
+    .slide:nth-child(1) { background-image: url('photo1.jpg'); animation-delay: 0s; }
+    .slide:nth-child(2) { background-image: url('photo2.jpg'); animation-delay: 5s; }
+    .slide:nth-child(3) { background-image: url('photo3.jpg'); animation-delay: 10s; }
+    .slide:nth-child(4) { background-image: url('photo4.jpg'); animation-delay: 15s; }
+    .slide:nth-child(5) { background-image: url('photo5.jpg'); animation-delay: 20s; }
+    .slide:nth-child(6) { background-image: url('photo6.jpg'); animation-delay: 25s; }
+    .slide:nth-child(7) { background-image: url('photo7.jpg'); animation-delay: 30s; }
+    .slide:nth-child(8) { background-image: url('photo8.jpg'); animation-delay: 35s; }
+
+    @keyframes fadeSlide {
+      0%, 100% { opacity: 0; }
+      12.5%, 25% { opacity: 1; }
+    }
+
+    #content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    #instruction {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #ffe600;
+      text-shadow: 1px 1px 3px black;
+    }
+
+    #giftBtn, #videoBtn {
+      font-size: 28px;
+      padding: 12px 24px;
+      margin: 20px;
+      border: none;
+      border-radius: 12px;
+      background-color: #ff4081;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    #giftBtn:hover, #videoBtn:hover {
+      transform: scale(1.1);
+    }
+
+    .message {
+      font-size: 36px;
+      margin-top: 20px;
+      display: none;
+      text-shadow: 2px 2px 6px black;
+    }
+
+    .countdown-number {
+      font-size: 72px;
+      font-weight: bold;
+      animation: pop 0.6s ease-in-out;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    video {
+      display: none;
+      margin-top: 30px;
+      max-width: 90%;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+    }
+
+    .heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      transform: rotate(45deg);
+      animation: float 6s linear infinite;
+    }
+
+    .heart:before,
+    .heart:after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      border-radius: 50%;
+    }
+
+    .heart:before { top: -10px; left: 0; }
+    .heart:after { top: 0; left: -10px; }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(45deg); opacity: 1; }
+      100% { transform: translateY(-800px) rotate(45deg); opacity: 0; }
+    }
+
+    .fade-out {
+      animation: fadeOut 1s forwards;
+    }
+
+    .fade-in {
+      animation: fadeIn 1s forwards;
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; visibility: visible; }
+      to { opacity: 1; visibility: visible; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Slideshow -->
+  <div id="slideshow">
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+  </div>
+
+  <!-- Background Music -->
+  <audio id="bgMusic" loop>
+    <source src="your-music.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Content -->
+  <div id="content">
+    <div id="instruction">Click the gift box to begin!</div>
+    <button id="giftBtn">🎁</button>
+
+    <div id="countdownNumber" class="countdown-number"></div>
+    <div id="countdown" class="message"></div>
+    <div id="celebrate" class="message">🎉 Get ready to celebrate! 🎈</div>
+
+    <button id="videoBtn" style="display:none;">▶️ Click here to view the video</button>
+    <video id="bdayVideo" controls>
+      <source src="your-video.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    const giftBtn = document.getElementById('giftBtn');
+    const videoBtn = document.getElementById('videoBtn');
+    const countdownNumber = document.getElementById('countdownNumber');
+    const countdown = document.getElementById('countdown');
+    const celebrate = document.getElementById('celebrate');
+    const instruction = document.getElementById('instruction');
+    const bdayVideo = document.getElementById('bdayVideo');
+    const bgMusic = document.getElementById('bgMusic');
+    const slideshow = document.getElementById('slideshow');
+
+    const targetDate = new Date("2025-06-12T00:00:00");
+
+    giftBtn.addEventListener('click', () => {
+      giftBtn.disabled = true;
+      instruction.textContent = "";
+
+      bgMusic.volume = 0.5;
+      bgMusic.play().catch(err => console.log("Music autoplay blocked"));
+
+      slideshow.style.display = 'block';
+
+      const values = ['3', '2', '1'];
+      let i = 0;
+      countdownNumber.style.display = 'block';
+      countdownNumber.textContent = values[i];
+
+      const interval = setInterval(() => {
+        i++;
+        if (i < values.length) {
+          countdownNumber.textContent = values[i];
+          countdownNumber.classList.remove('countdown-number');
+          void countdownNumber.offsetWidth;
+          countdownNumber.classList.add('countdown-number');
+        } else {
+          clearInterval(interval);
+          countdownNumber.style.display = 'none';
+          triggerCelebration();
+        }
+      }, 800);
+    });
+
+    function triggerCelebration() {
+      showFinalMessages();
+      launchConfetti();
+      generateHearts();
+      setTimeout(launchFireworks, 200);
+    }
+
+    function showFinalMessages() {
+      const today = new Date();
+      const diffTime = targetDate - today;
+      const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      countdown.textContent = `${daysLeft} Days to go baby!`;
+      countdown.style.display = 'block';
+      celebrate.style.display = 'block';
+      videoBtn.style.display = 'inline-block';
+
+      // Gift button also visible here
+      giftBtn.style.display = 'inline-block';
+
+      setTimeout(() => {
+        // Fade out countdown, celebrate, videoBtn and giftBtn together
+        countdown.classList.add("fade-out");
+        celebrate.classList.add("fade-out");
+        videoBtn.classList.add("fade-out");
+        giftBtn.classList.add("fade-out");
+      }, 5000);
+
+      setTimeout(() => {
+        // After fade out, hide them
+        countdown.style.display = 'none';
+        celebrate.style.display = 'none';
+        videoBtn.style.display = 'none';
+        giftBtn.style.display = 'none';
+
+        // Remove fade-out class and add fade-in class to fade them back in
+        countdown.classList.remove("fade-out");
+        celebrate.classList.remove("fade-out");
+        videoBtn.classList.remove("fade-out");
+        giftBtn.classList.remove("fade-out");
+
+        countdown.classList.add("fade-in");
+        celebrate.classList.add("fade-in");
+        videoBtn.classList.add("fade-in");
+        giftBtn.classList.add("fade-in");
+
+        countdown.style.display = 'block';
+        celebrate.style.display = 'block';
+        videoBtn.style.display = 'inline-block';
+        giftBtn.style.display = 'inline-block';
+      }, 40000);
+    }
+
+    function launchConfetti() {
+      confetti({
+        particleCount: 250,
+        spread: 120,
+        origin: { y: 0.6 }
+      });
+    }
+
+    function generateHearts() {
+      for (let i = 0; i < 25; i++) {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 6000);
+      }
+    }
+
+    function launchFireworks() {
+      const end = Date.now() + 10 * 1000;
+      (function frame() {
+        confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
+        confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      })();
+    }
+
+    videoBtn.addEventListener('click', () => {
+      videoBtn.style.display = 'none';
+      bdayVideo.style.display = 'block';
+      bdayVideo.play();
+    });
+  </script>
+</body>
+</html>
